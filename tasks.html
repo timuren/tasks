@@ -5,6 +5,10 @@
 <head>
 
   <meta charset="utf-8">
+  <script src="scripts/tasks-controller.js"></script>
+
+  <title>Task list</title>
+
   <!-- Force IE to use latest mode for HTML5 -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
@@ -12,8 +16,8 @@
 
   <script src="scripts/jquery-3.3.1.js"></script>
   <script src="scripts/jquery-tmpl.js"></script>
-
-  <title>Task list</title>
+  <script src="scripts/jquery.validate.js"></script>
+  <script src="scripts/jquery-serialization.js"></script>
 
 </head>
 
@@ -22,12 +26,12 @@
     <span>Task list</span>
   </header>
 
-  <main>
+  <main id="taskPage">
     <section id="taskCreation" class="not">
       <form>
         <div>
           <label>Task</label>
-          <input type="text" required="required" name="task" class="large" placeholder="Breakfast at Tiffany's" />
+          <input type="text" required="required" maxlength="200" name="task" class="large" placeholder="Breakfast at Tiffany's" />
         </div>
         <div>
           <label>Required by</label>
@@ -125,60 +129,8 @@
    signalled by the $(document).load() callback.
    */
   $(document).ready(function() {
-    $('[required="required"]').prev('label').append('<span>*</span>').children('span').addClass('required');
-    $('tbody tr:even').addClass('even');
 
-    $('#btnAddTask').click(function(evt) {
-      evt.preventDefault();
-      $('#taskCreation').removeClass('not');
-      //console.log("Clicked: [" + $(evt.target).html() +"]");
-    });
-
-    $('#saveTask').click(function(evt) {
-      evt.preventDefault();
-      var task = $('form').toObject();
-      $('#taskRow').tmpl(task).appendTo($('#tblTasks tbody'));
-
-    });
-
-    $('tbody tr').click(function(evt) {
-      $(evt.target).closest('td').siblings().addBack().toggleClass('rowHighlight');
-    });
-
-    $('#tblTasks tbody').on('click', '.deleteRow', function(evt) {
-      evt.preventDefault();
-      $(evt.target).parents('tr').remove();
-    });
-
-    // Create a jQuery plugin using boiler plate code and guidelines
-    // See https://learn.jquery.com/plugins/basic-plugin-creation/)
-    (function($) {
-      $.fn.extend({
-
-        toObject: function() {
-
-          var result = {};
-          $.each(this.serializeArray(), function(i, v) {
-            result[v.name] = v.value;
-          });
-          return result;
-        },
-
-        fromObject: function(obj) {
-
-          $.each(this.find(':input'), function(i,v) {
-            var name = $(v).attr('name');
-
-            if (obj[name]) {
-              $(v).val(obj[name]);
-            } else {
-              $(v).val('');
-            }
-          });
-        }
-
-      });
-    })(jQuery);
+    tasksController.init($('#taskPage'));
 
   });
 
