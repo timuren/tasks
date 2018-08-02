@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <!-- Force IE to use latest mode for HTML5 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+  <link rel="stylesheet" type="text/css" href="styles/tasks.css" media="screen" />
+
+  <script src="scripts/jquery-3.3.1.js"></script>
+  <script src="scripts/jquery-tmpl.js"></script>
+
+  <title>Task list</title>
+
+</head>
+
+<body>
+  <header>
+    <span>Task list</span>
+  </header>
+
+  <main>
+    <section id="taskCreation" class="not">
+      <form>
+        <div>
+          <label>Task</label>
+          <input type="text" required="required" name="task" class="large" placeholder="Breakfast at Tiffany's" />
+        </div>
+        <div>
+          <label>Required by</label>
+          <input type="date" required="required" name="requiredBy" />
+        </div>
+        <div>
+          <label>Category</label>
+          <select name ="category">
+            <option value="Personal">Personal</option>
+            <option value="Work">Work</option>
+          </select>
+        </div>
+
+      <nav>
+        <a href="#" id="saveTask">Save task</a><a href="#">Clear task</a>
+      </nav>
+    </form>
+  </section>
+
+  <section>
+    <table id="tblTasks">
+      <colgroup>
+        <col width="40%">
+        <col width="15%">
+        <col width="15%">
+        <col width="30%">
+      </colgroup>
+
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Due</th>
+          <th>Category</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr>
+          <td>Return library books</td>
+          <td><time datetime="2013-10-14">2013-10-14</time></td>
+          <td>Personal</td>
+          <td>
+            <nav>
+              <a href="#" class="editRow">Edit</a>
+              <a href="#" class="completeRow">Complete</a>
+              <a href="#" class="deleteRow">Delete</a>
+            </nav>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Perform project demo to stakeholders</td>
+          <td><time datetime="2013-10-14">2013-10-14</time></td>
+          <td>Work</td>
+          <td>
+            <nav>
+              <a href="#" class="editRow">Edit</a>
+              <a href="#" class="completeRow">Complete</a>
+              <a href="#" class="deleteRow">Delete</a>
+            </nav>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Meet friends for dinner</td>
+          <td><time datetime="2013-10-14">2013-10-14</time></td>
+          <td>Personal</td>
+          <td>
+            <nav>
+              <a href="#" class="editRow">Edit</a>
+              <a href="#" class="completeRow">Complete</a>
+              <a href="#" class="deleteRow">Delete</a>
+            </nav>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <nav>
+      <a href="#" id="btnAddTask">Add task</a>
+    </nav>
+  </section>
+</main>
+<footer>You have 3 tasks</footer>
+</body>
+
+<script>
+
+/* Make sure DOM is ready before adding event listeners
+   Even more conservatively - and unnecessary in this case -
+   would be to wait until all resources have loaded:
+   signalled by the $(document).load() callback.
+   */
+  $(document).ready(function() {
+    $('[required="required"]').prev('label').append('<span>*</span>').children('span').addClass('required');
+    $('tbody tr:even').addClass('even');
+
+    $('#btnAddTask').click(function(evt) {
+      evt.preventDefault();
+      $('#taskCreation').removeClass('not');
+      //console.log("Clicked: [" + $(evt.target).html() +"]");
+    });
+
+    $('#saveTask').click(function(evt) {
+      evt.preventDefault();
+      var task = $('form').toObject();
+      $('#taskRow').tmpl(task).appendTo($('#tblTasks tbody'));
+
+    });
+
+    $('tbody tr').click(function(evt) {
+      $(evt.target).closest('td').siblings().addBack().toggleClass('rowHighlight');
+    });
+
+    $('#tblTasks tbody').on('click', '.deleteRow', function(evt) {
+      evt.preventDefault();
+      $(evt.target).parents('tr').remove();
+    });
+
+    // Create a jQuery plugin using boiler plate code and guidelines
+    // See https://learn.jquery.com/plugins/basic-plugin-creation/)
+    (function($) {
+      $.fn.extend({
+
+        toObject: function() {
+
+          var result = {};
+          $.each(this.serializeArray(), function(i, v) {
+            result[v.name] = v.value;
+          });
+          return result;
+        },
+
+        fromObject: function(obj) {
+
+          $.each(this.find(':input'), function(i,v) {
+            var name = $(v).attr('name');
+
+            if (obj[name]) {
+              $(v).val(obj[name]);
+            } else {
+              $(v).val('');
+            }
+          });
+        }
+
+      });
+    })(jQuery);
+
+  });
+
+</script>
+<script id="taskRow" type="text/x-JQuery-tmpl">
+
+  <tr>
+    <td>${task}</td>
+    <td><time datetime="${requiredBy}">${requiredBy}</time></td>
+    <td>${category}</td>
+    <td>
+      <nav>
+        <a href="#" class="editRow">Edit</a>
+        <a href="#" class="completeRow">Complete</a>
+        <a href="#" class="deleteRow">Delete</a>
+      </nav>
+    </td>
+  </tr>
+
+</script>
+
+</html>
