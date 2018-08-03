@@ -18,6 +18,10 @@
   <script src="scripts/jquery-tmpl.js"></script>
   <script src="scripts/jquery.validate.js"></script>
   <script src="scripts/jquery-serialization.js"></script>
+  <script src="scripts/tasks-controller.js"></script>
+
+  <script src="scripts/tasks-webstorage.js"></script>
+  <!--script src="scripts/tasks-indexeddb.js"></script-->
 
 </head>
 
@@ -28,7 +32,8 @@
 
   <main id="taskPage">
     <section id="taskCreation" class="not">
-      <form>
+      <form id="taskForm">
+        <input type="hidden" name="id"/>
         <div>
           <label>Task</label>
           <input type="text" required="required" maxlength="200" name="task" class="large" placeholder="Breakfast at Tiffany's" />
@@ -70,7 +75,7 @@
       </thead>
 
       <tbody>
-
+<!--
         <tr>
           <td>Return library books</td>
           <td><time datetime="2013-10-14">2013-10-14</time></td>
@@ -109,7 +114,7 @@
             </nav>
           </td>
         </tr>
-
+-->
       </tbody>
     </table>
 
@@ -132,6 +137,8 @@
 
     tasksController.init($('#taskPage'));
 
+    tasksController.loadTasks ();
+
   });
 
 </script>
@@ -143,9 +150,9 @@
     <td>${category}</td>
     <td>
       <nav>
-        <a href="#" class="editRow">Edit</a>
+        <a href="#" class="editRow" data-task-id="${id}">Edit</a>
         <a href="#" class="completeRow">Complete</a>
-        <a href="#" class="deleteRow">Delete</a>
+        <a href="#" class="deleteRow" data-task-id="${id}">Delete</a>
       </nav>
     </td>
   </tr>
