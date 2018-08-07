@@ -20,7 +20,7 @@
   <script src="scripts/jquery-serialization.js"></script>
   <script src="scripts/tasks-controller.js"></script>
 
-  <script src="scripts/tasks-webstorage.js"></script>
+  <!--script src="scripts/tasks-webstorage.js"></script-->
   <!--script src="scripts/tasks-indexeddb.js"></script-->
 
 </head>
@@ -123,23 +123,55 @@
     </nav>
   </section>
 </main>
-<footer>You have 3 tasks</footer>
+<footer>You have <span id="taskCount"></span> tasks</footer>
 </body>
 
 <script>
 
-/* Make sure DOM is ready before adding event listeners
-   Even more conservatively - and unnecessary in this case -
-   would be to wait until all resources have loaded:
-   signalled by the $(document).load() callback.
-   */
-  $(document).ready(function() {
+/*
+  function initScreen() {
+    $(document).ready (function() {
+      tasksController.init($('#taskPage'), function() {
 
-    tasksController.init($('#taskPage'));
+        tasksController.loadTasks();
+      });
+    })
+  }
+*/
+  var initScreen = function() {
+    $(document).ready (function() {
+      console.log(this.name);
+      tasksController.init($('#taskPage'), function() {
+      });
+    });
+  }
 
-    tasksController.loadTasks ();
+  if (window.indexedDB) {
 
-  });
+    $.getScript ("scripts/tasks-indexeddb.js")
+
+    .done (function(script, textStatus) {
+    //  console.log(this.name);
+      initScreen();
+    })
+
+    .fail (function(jqxhr, settings, exception) {
+      console.log ('Failed to load indexed db script');
+    });
+
+  } else if (window.localStorage) {
+
+    $.getScript ("scripts/tasks-webstorage.js")
+
+    .done (function(script, textStatus) {
+      //console.log(this.name);
+      initScreen();
+    })
+
+    .fail (function(jqxhr, settings, exception) {
+      console.log ('Failed to load web storage script');
+    });
+  }
 
 </script>
 <script id="taskRow" type="text/x-JQuery-tmpl">
